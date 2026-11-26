@@ -25,6 +25,14 @@
   .body h2{font-size:19px;margin-bottom:6px}
   .body p{font-size:14px;color:var(--muted);flex:1}
   .go{margin-top:16px;font-size:14px;font-weight:600;color:var(--accent)}
+  .ai{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:32px 36px;margin-bottom:24px;transition:.2s}
+  .ai:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.07)}
+  .ai h2{font-size:22px;margin-bottom:8px}
+  .ai p{font-size:14.5px;color:var(--muted)}
+  .ai-chat{background:#f6f1ea;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+  .ai-chat .b{max-width:85%;font-size:13.5px;padding:8px 12px;border-radius:14px}
+  .ai-chat .me{align-self:flex-end;background:#7b4a2a;color:#fff;border-bottom-right-radius:4px}
+  .ai-chat .bot{align-self:flex-start;background:#fff;border:1px solid #eee2d3;border-bottom-left-radius:4px}
   .how{background:var(--ink);color:#eef0f5;border-radius:22px;padding:36px;margin-bottom:56px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
   .how h2{font-size:24px;margin-bottom:10px}
   .how p{color:#aab0bf;font-size:15px}
@@ -37,6 +45,7 @@
     .top{padding:44px 0 28px}
     .top h1{font-size:30px}
     .how{grid-template-columns:1fr;padding:28px 22px}
+    .ai{grid-template-columns:1fr;padding:24px 20px;gap:20px}
     .frame{height:220px}
     .frame iframe{transform:scale(.3)}
   }
@@ -47,7 +56,7 @@
   <div class="top">
     <div class="k">WEB DESIGN · 作品示例</div>
     <h1>个人主页 · 落地页 · 小店官网</h1>
-    <p>下面是 3 个不同类型的示例网站，点开就能体验。全部自动适配手机和电脑，可以按你的品牌、内容和风格定制。</p>
+    <p>下面是 3 个不同类型的示例网站和 1 个 AI 客服示例，点开就能体验。全部自动适配手机和电脑，可以按你的品牌、内容和风格定制。</p>
   </div>
 
   <div class="grid">
@@ -64,6 +73,21 @@
       <div class="body"><div class="type">活动 / 产品落地页</div><h2>训练营报名页</h2><p>卖点、课程安排、价格、常见问题和报名表单。适合课程、活动、新品推广。</p><div class="go">打开示例 →</div></div>
     </a>
   </div>
+
+  <a class="ai" href="cafe/?chat=1">
+    <div class="ai-txt">
+      <div class="type">AI 客服 · 智能体</div>
+      <h2>给网站加一个 24 小时在线的 AI 店员</h2>
+      <p>把营业时间、价格、地址、售后规则等整理成知识库，客人随时提问、秒回。可以嵌在官网右下角，也可以接入公众号、飞书等平台。</p>
+      <div class="go">打开咖啡店示例，试着问它问题 →</div>
+    </div>
+    <div class="ai-chat" aria-hidden="true">
+      <div class="b me">可以带狗吗？</div>
+      <div class="b bot">我们是宠物友好店 🐶 可以带毛孩子坐户外区～</div>
+      <div class="b me">推荐喝什么？</div>
+      <div class="b bot">第一次来推荐招牌「脏脏」，冰牛奶 + 热浓缩 ☕</div>
+    </div>
+  </a>
 
   <div class="how">
     <div>
