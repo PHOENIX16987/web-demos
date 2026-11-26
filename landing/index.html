@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7 天 AI 办公提效营</title>
+<meta name="description" content="7 天学会用 AI 处理表格、写文档、做 PPT（示例落地页）">
+<style>
+  :root{
+    --bg:#ffffff; --soft:#f4f6fb; --ink:#141a2b; --muted:#5d667a; --line:#e3e7f0;
+    --brand:#4f46e5; --brand-2:#7c3aed; --hot:#f97316;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+  .bar{background:var(--ink);color:#fff;text-align:center;font-size:13.5px;padding:8px 12px}
+  .bar b{color:#fdba74}
+
+  .hero{background:radial-gradient(ellipse at top,#ece9ff 0%,#fff 60%);padding:72px 0 64px;text-align:center}
+  .pill{display:inline-block;font-size:13px;font-weight:600;color:var(--brand);background:#e9e7ff;padding:5px 14px;border-radius:99px;margin-bottom:20px}
+  .hero h1{font-size:50px;line-height:1.25;margin-bottom:18px;letter-spacing:-.01em}
+  .hero h1 span{background:linear-gradient(90deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 32px}
+  .btn{display:inline-block;background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;font-weight:700;font-size:17px;padding:15px 36px;border-radius:14px;box-shadow:0 10px 24px rgba(79,70,229,.28);transition:.15s;border:0;cursor:pointer;font-family:inherit}
+  .btn:hover{transform:translateY(-2px)}
+  .sub{font-size:13px;color:var(--muted);margin-top:14px}
+  .proof{display:flex;justify-content:center;gap:40px;margin-top:48px;flex-wrap:wrap}
+  .proof div b{display:block;font-size:30px}
+  .proof div span{font-size:13px;color:var(--muted)}
+
+  section{padding:72px 0}
+  .soft{background:var(--soft)}
+  .title{text-align:center;margin-bottom:40px}
+  .title h2{font-size:32px;margin-bottom:8px}
+  .title p{color:var(--muted)}
+
+  .pains{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .pain{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .pain .q{font-size:15px;color:var(--muted);margin-bottom:10px}
+  .pain h3{font-size:18px}
+  .pain .a{margin-top:14px;font-size:14px;color:var(--brand);font-weight:600}
+
+  .timeline{max-width:720px;margin:0 auto;position:relative}
+  .timeline:before{content:"";position:absolute;left:23px;top:8px;bottom:8px;width:2px;background:var(--line)}
+  .day{display:flex;gap:20px;padding:14px 0;position:relative}
+  .day .n{flex:none;width:48px;height:48px;border-radius:14px;background:#fff;border:2px solid var(--brand);color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:14px;z-index:1}
+  .day h3{font-size:17px}
+  .day p{font-size:14.5px;color:var(--muted)}
+
+  .price{max-width:440px;margin:0 auto;background:#fff;border:2px solid var(--brand);border-radius:22px;padding:36px 32px;text-align:center;position:relative}
+  .price .ribbon{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--hot);color:#fff;font-size:13px;font-weight:700;padding:4px 16px;border-radius:99px}
+  .price .num{font-size:56px;font-weight:800;line-height:1.1;margin:10px 0 2px}
+  .price .num small{font-size:20px}
+  .price del{color:var(--muted);font-size:15px}
+  .price ul{list-style:none;text-align:left;margin:24px 0 28px}
+  .price li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}
+  .price li:before{content:"✓";color:var(--brand);font-weight:800;margin-right:10px}
+
+  .faq{max-width:720px;margin:0 auto}
+  details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+  summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+  details[open] summary:after{content:"−"}
+  details p{color:var(--muted);font-size:14.5px;margin-top:10px}
+
+  .form{max-width:480px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px}
+  .form label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
+  .form input,.form select{width:100%;font:inherit;font-size:15px;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .form input:focus,.form select:focus{outline:none;border-color:var(--brand)}
+  .form .btn{width:100%;margin-top:22px}
+  .err{color:#dc2626;font-size:13px;min-height:18px;margin-top:6px}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:12px;font-size:15px;transition:.3s;z-index:20;max-width:calc(100% - 32px);opacity:0;visibility:hidden}
+  .toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+
+  footer{text-align:center;color:var(--muted);font-size:12.5px;padding:32px 0 96px}
+  .sticky-cta{display:none}
+
+  @media (max-width:760px){
+    .hero{padding:52px 0 48px}
+    .hero h1{font-size:32px}
+    .hero p{font-size:16px}
+    .proof{gap:24px}
+    .pains{grid-template-columns:1fr}
+    .title h2{font-size:26px}
+    section{padding:56px 0}
+    .price{padding:32px 22px}
+    .form{padding:24px 20px}
+    .sticky-cta{display:block;position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);border-top:1px solid var(--line);z-index:15}
+    .sticky-cta .btn{width:100%;text-align:center;padding:13px}
+  }
+</style>
+</head>
+<body>
+<div class="bar">🔥 第 3 期报名中，早鸟价剩余 <b id="seats">18</b> 个名额</div>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="pill">零基础 · 每天 30 分钟 · 手机电脑都能学</span>
+    <h1>7 天，让 AI 帮你<br><span>干完一半的办公活</span></h1>
+    <p>表格整理、写周报、做 PPT、回复消息……用对 AI 工具，这些事情能从几小时缩短到几分钟。不讲大道理，每天一个能马上用上的技巧。</p>
+    <a href="#join" class="btn">立即报名 · ¥99</a>
+    <div class="sub">不满意 7 天内全额退款</div>
+    <div class="proof">
+      <div><b>3h → 15min</b><span>周报和总结</span></div>
+      <div><b>7 个</b><span>可直接套用的模板</span></div>
+      <div><b>1 对 1</b><span>群内答疑</span></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="title"><h2>你是不是也这样？</h2><p>这些事情，其实都可以交给 AI</p></div>
+    <div class="pains">
+      <div class="pain"><div class="q">“每周一早上……”</div><h3>花一上午整理几张 Excel 表</h3><div class="a">→ 第 2 天：让 AI 帮你写公式、合并表格</div></div>
+      <div class="pain"><div class="q">“明天就要汇报……”</div><h3>PPT 改到半夜还是不好看</h3><div class="a">→ 第 4 天：用 AI 一键生成大纲和排版</div></div>
+      <div class="pain"><div class="q">“又要写总结……”</div><h3>对着空白文档不知道怎么开头</h3><div class="a">→ 第 3 天：用提示词模板 10 分钟出初稿</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap">
+    <div class="title"><h2>7 天学习安排</h2><p>每天 30 分钟视频 + 1 个小练习</p></div>
+    <div class="timeline">
+      <div class="day"><div class="n">D1</div><div><h3>选对工具：常用 AI 工具横向对比</h3><p>哪个适合写东西、哪个适合处理表格、哪些免费能用。</p></div></div>
+      <div class="day"><div class="n">D2</div><div><h3>AI + Excel：公式、清洗、汇总</h3><p>不会函数也没关系，用大白话描述需求就行。</p></div></div>
+      <div class="day"><div class="n">D3</div><div><h3>AI 写作：周报、总结、邮件</h3><p>掌握 3 个提示词结构，写出来不像 AI。</p></div></div>
+      <div class="day"><div class="n">D4</div><div><h3>AI 做 PPT：从大纲到成品</h3><p>内容、结构、配图一条龙。</p></div></div>
+      <div class="day"><div class="n">D5</div><div><h3>会议纪要与资料整理</h3><p>录音转文字、自动提炼要点和待办。</p></div></div>
+      <div class="day"><div class="n">D6</div><div><h3>搭一个自己的 AI 助手</h3><p>把常用要求存成模板，以后一句话调用。</p></div></div>
+      <div class="day"><div class="n">D7</div><div><h3>实战作业 + 复盘</h3><p>用一周所学，完成一份你真实工作中的任务。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="join">
+  <div class="wrap">
+    <div class="title"><h2>报名方式</h2><p>早鸟价仅限本期</p></div>
+    <div class="price">
+      <div class="ribbon">早鸟价</div>
+      <div style="color:var(--muted);font-size:14px">7 天 AI 办公提效营 · 第 3 期</div>
+      <div class="num"><small>¥</small>99</div>
+      <del>原价 ¥299</del>
+      <ul>
+        <li>7 节录播课，永久回看</li>
+        <li>7 套提示词和表格模板</li>
+        <li>学习群 1 对 1 答疑（7 天）</li>
+        <li>结营作业点评</li>
+      </ul>
+    </div>
+
+    <form class="form" id="f" novalidate style="margin-top:28px">
+      <div style="font-weight:700;font-size:18px">填写报名信息</div>
+      <label for="name">称呼</label>
+      <input id="name" placeholder="怎么称呼你" autocomplete="off">
+      <label for="phone">手机号</label>
+      <input id="phone" inputmode="numeric" placeholder="用于发送入群方式" autocomplete="off" maxlength="11">
+      <label for="job">你的工作</label>
+      <select id="job"><option value="">请选择</option><option>行政 / 文员</option><option>运营 / 市场</option><option>财务 / 会计</option><option>学生</option><option>其他</option></select>
+      <div class="err" id="err"></div>
+      <button class="btn" type="submit">提交报名</button>
+      <div class="sub" style="text-align:center">提交后 24 小时内会有工作人员联系你</div>
+    </form>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap">
+    <div class="title"><h2>常见问题</h2></div>
+    <div class="faq">
+      <details><summary>完全不懂 AI，能跟上吗？</summary><p>可以。课程从注册和第一次提问开始讲，所有操作都有录屏。</p></details>
+      <details><summary>需要付费买 AI 工具吗？</summary><p>不需要。课程里用到的工具都有免费版本，足够完成练习。</p></details>
+      <details><summary>没时间看直播怎么办？</summary><p>全部是录播课，任何时间都能看，并且可以永久回看。</p></details>
+      <details><summary>不满意可以退款吗？</summary><p>开营 7 天内不满意，联系助教即可全额退款。</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>© 7 天 AI 办公提效营 · 落地页设计示例，课程与数据均为虚构，表单不会真实提交</footer>
+
+<div class="sticky-cta"><a href="#join" class="btn">立即报名 · ¥99</a></div>
+<div class="toast" id="toast">✅ 报名成功！（示例页面，信息未真实提交）</div>
+
+<script>
+  var f=document.getElementById('f'), err=document.getElementById('err'), toast=document.getElementById('toast');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=document.getElementById('name').value.trim();
+    var phone=document.getElementById('phone').value.trim();
+    var job=document.getElementById('job').value;
+    if(!name){err.textContent='请填写称呼';return}
+    if(!/^1\d{10}$/.test(phone)){err.textContent='请填写 11 位手机号';return}
+    if(!job){err.textContent='请选择你的工作';return}
+    err.textContent='';
+    f.reset();
+    toast.classList.add('show');
+    setTimeout(function(){toast.classList.remove('show')},2800);
+  });
+</script>
+</body>
+</html>

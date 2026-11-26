@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>网页定制作品集</title>
+<meta name="description" content="个人主页、落地页、小店官网定制作品示例">
+<style>
+  :root{--bg:#fafaf7;--ink:#1b1d22;--muted:#6b7080;--line:#e6e6e0;--card:#fff;--accent:#2f6fed}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  .top{padding:64px 0 40px}
+  .top .k{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:10px}
+  .top h1{font-size:40px;line-height:1.3;margin-bottom:14px}
+  .top p{color:var(--muted);max-width:600px;font-size:16.5px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-bottom:48px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.07)}
+  .frame{height:200px;overflow:hidden;position:relative;border-bottom:1px solid var(--line);background:#eee}
+  .frame iframe{width:1280px;height:800px;border:0;transform:scale(.25);transform-origin:0 0;pointer-events:none;position:absolute;top:0;left:0}
+  .body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+  .type{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .body h2{font-size:19px;margin-bottom:6px}
+  .body p{font-size:14px;color:var(--muted);flex:1}
+  .go{margin-top:16px;font-size:14px;font-weight:600;color:var(--accent)}
+  .how{background:var(--ink);color:#eef0f5;border-radius:22px;padding:36px;margin-bottom:56px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .how h2{font-size:24px;margin-bottom:10px}
+  .how p{color:#aab0bf;font-size:15px}
+  .steps{list-style:none;counter-reset:s}
+  .steps li{counter-increment:s;padding:8px 0 8px 40px;position:relative;font-size:15px}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:8px;width:26px;height:26px;border-radius:50%;background:#2f6fed;color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;padding:0 0 40px}
+  @media (max-width:860px){
+    .grid{grid-template-columns:1fr}
+    .top{padding:44px 0 28px}
+    .top h1{font-size:30px}
+    .how{grid-template-columns:1fr;padding:28px 22px}
+    .frame{height:220px}
+    .frame iframe{transform:scale(.3)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="k">WEB DESIGN · 作品示例</div>
+    <h1>个人主页 · 落地页 · 小店官网</h1>
+    <p>下面是 3 个不同类型的示例网站，点开就能体验。全部自动适配手机和电脑，可以按你的品牌、内容和风格定制。</p>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="cafe/">
+      <div class="frame"><iframe src="cafe/" title="咖啡店官网预览" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="body"><div class="type">小店官网</div><h2>栖木咖啡</h2><p>品牌介绍、分类菜单、营业时间和地图。适合咖啡馆、餐厅、工作室、实体小店。</p><div class="go">打开示例 →</div></div>
+    </a>
+    <a class="card" href="portfolio/">
+      <div class="frame"><iframe src="portfolio/" title="个人主页预览" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="body"><div class="type">个人主页 / 作品集</div><h2>开发者个人主页</h2><p>自我介绍、技能、作品展示和联系方式。适合求职、自由职业者、设计师、博主。</p><div class="go">打开示例 →</div></div>
+    </a>
+    <a class="card" href="landing/">
+      <div class="frame"><iframe src="landing/" title="落地页预览" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="body"><div class="type">活动 / 产品落地页</div><h2>训练营报名页</h2><p>卖点、课程安排、价格、常见问题和报名表单。适合课程、活动、新品推广。</p><div class="go">打开示例 →</div></div>
+    </a>
+  </div>
+
+  <div class="how">
+    <div>
+      <h2>想要一个类似的网站？</h2>
+      <p>告诉我你是做什么的、想放哪些内容、喜欢什么风格，先免费出方案和报价。单页 199 元起。</p>
+    </div>
+    <ol class="steps">
+      <li>发需求和参考图，免费评估报价</li>
+      <li>先出首页设计稿，满意再继续</li>
+      <li>开发完成，电脑和手机都测试一遍</li>
+      <li>上线交付，7 天内免费小改</li>
+    </ol>
+  </div>
+</div>
+<footer>示例网站中的品牌、人物和数据均为虚构</footer>
+</body>
+</html>
