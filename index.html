@@ -29,6 +29,8 @@
   .ai:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.07)}
   .ai h2{font-size:22px;margin-bottom:8px}
   .ai p{font-size:14.5px;color:var(--muted)}
+  .dframe{height:260px;border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative;background:#f5f3ee}
+  .dframe iframe{width:1360px;height:1100px;border:0;transform:scale(.33);transform-origin:0 0;pointer-events:none;position:absolute;top:0;left:0}
   .ai-chat{background:#f6f1ea;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
   .ai-chat .b{max-width:85%;font-size:13.5px;padding:8px 12px;border-radius:14px}
   .ai-chat .me{align-self:flex-end;background:#7b4a2a;color:#fff;border-bottom-right-radius:4px}
@@ -46,6 +48,8 @@
     .top h1{font-size:30px}
     .how{grid-template-columns:1fr;padding:28px 22px}
     .ai{grid-template-columns:1fr;padding:24px 20px;gap:20px}
+    .dframe{height:200px}
+    .dframe iframe{transform:scale(.24)}
     .frame{height:220px}
     .frame iframe{transform:scale(.3)}
   }
@@ -56,7 +60,7 @@
   <div class="top">
     <div class="k">WEB DESIGN · 作品示例</div>
     <h1>个人主页 · 落地页 · 小店官网</h1>
-    <p>下面是 3 个不同类型的示例网站和 1 个 AI 客服示例，点开就能体验。全部自动适配手机和电脑，可以按你的品牌、内容和风格定制。</p>
+    <p>下面是 3 个不同类型的示例网站、1 个数据看板和 1 个 AI 客服示例，点开就能体验。全部自动适配手机和电脑，可以按你的品牌、内容和风格定制。</p>
   </div>
 
   <div class="grid">
@@ -73,6 +77,16 @@
       <div class="body"><div class="type">活动 / 产品落地页</div><h2>训练营报名页</h2><p>卖点、课程安排、价格、常见问题和报名表单。适合课程、活动、新品推广。</p><div class="go">打开示例 →</div></div>
     </a>
   </div>
+
+  <a class="ai dash" href="dashboard/">
+    <div class="ai-txt">
+      <div class="type">数据看板 · 可视化</div>
+      <h2>把 Excel 和后台导出的数据，做成一打开就懂的看板</h2>
+      <p>营业额走势、商品排行、渠道占比、客流时段，再加上自动发现的异常提醒。支持按今日 / 近 7 天 / 近 30 天切换，表格可以排序，手机上也能看。</p>
+      <div class="go">打开经营看板示例 →</div>
+    </div>
+    <div class="dframe" aria-hidden="true"><iframe src="dashboard/" title="经营看板预览" loading="lazy" tabindex="-1"></iframe></div>
+  </a>
 
   <a class="ai" href="cafe/?chat=1">
     <div class="ai-txt">
