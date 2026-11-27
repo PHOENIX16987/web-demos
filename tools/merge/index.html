@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表格合并拆分工具</title>
+<meta name="description" content="在浏览器里合并多个 Excel / CSV，或按某一列拆分表格，文件不上传（演示工具）">
+<style>
+  :root{
+    --bg:#f4f6f3; --card:#fff; --ink:#1d2320; --muted:#6c756f; --line:#dde3dc; --soft:#f8faf7;
+    --brand:#2e7d4f; --brand-soft:#e3f1e8; --warn:#a6560f; --warn-soft:#fbefe2; --err:#b3261e; --err-soft:#fbe7e5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:14.5px}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 48px}
+  header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px;margin-bottom:18px}
+  h1{font-size:26px;display:flex;align-items:center;gap:10px}
+  h1 i{width:30px;height:30px;border-radius:8px;background:var(--brand);display:inline-grid;place-items:center;color:#fff;font-style:normal;font-size:16px}
+  header p{color:var(--muted);font-size:13.5px}
+  .tabs{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:16px}
+  .tabs button{font:inherit;font-size:14.5px;border:0;background:none;padding:8px 22px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:600}
+  .tabs button.on{background:var(--brand);color:#fff}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+  .card h2{font-size:15.5px;margin-bottom:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .card h2 span{font-size:12.5px;color:var(--muted);font-weight:400}
+  .drop{border:2px dashed #c6d0c6;border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;transition:.15s;background:var(--soft)}
+  .drop.on{border-color:var(--brand);background:var(--brand-soft)}
+  .drop b{display:block;font-size:16px;margin-bottom:4px}
+  .drop small{color:var(--muted)}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+  .btn{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 16px;border-radius:9px;cursor:pointer}
+  .btn.main{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn:focus-visible,.tabs button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .files{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .file{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;flex-wrap:wrap}
+  .file b{font-weight:600;min-width:0;overflow-wrap:anywhere}
+  .file .meta{color:var(--muted);flex:1;min-width:160px}
+  .file .x{border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px}
+  .opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+  .opts input{accent-color:var(--brand)}
+  select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  .stat{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+  .stat div{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+  .stat b{font-size:20px;display:block;font-variant-numeric:tabular-nums}
+  .stat span{font-size:12.5px;color:var(--muted)}
+  .cols{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .cols span{font-size:12.5px;padding:2px 9px;border-radius:6px;background:var(--brand-soft);color:var(--brand)}
+  .cols span.part{background:var(--warn-soft);color:var(--warn)}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;max-height:420px}
+  table{border-collapse:collapse;font-size:13px;width:100%}
+  th,td{padding:7px 10px;border-bottom:1px solid #edf1ec;text-align:left;white-space:nowrap}
+  th{background:var(--soft);position:sticky;top:0;font-weight:600;color:var(--muted)}
+  td.e{color:#c0c7c1}
+  .vals{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow:auto}
+  .val{display:flex;align-items:center;gap:10px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;font-size:13.5px}
+  .val b{flex:1;min-width:0;overflow-wrap:anywhere}
+  .val span{color:var(--muted);font-variant-numeric:tabular-nums}
+  .msg{font-size:13.5px;border-radius:9px;padding:9px 12px;margin-top:10px}
+  .msg.err{background:var(--err-soft);color:var(--err)}
+  .msg.ok{background:var(--brand-soft);color:var(--brand)}
+  [hidden]{display:none!important}
+  footer{font-size:12.5px;color:var(--muted);margin-top:18px}
+  @media (max-width:520px){ .wrap{padding:20px 14px 36px} h1{font-size:21px} .tabs button{padding:8px 14px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1><i>⇄</i>表格合并拆分工具</h1>
+      <p>Excel / CSV 都能用 · 全部在浏览器里完成，文件不会上传到任何地方</p>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist"><button id="tM" class="on" role="tab">合并多个表格</button><button id="tS" role="tab">按列拆分表格</button></div>
+
+  <!-- 合并 -->
+  <section id="pM">
+    <div class="card">
+      <h2>1 · 选择要合并的表格 <span>可以一次选多个，表头顺序不同也没关系</span></h2>
+      <label class="drop" id="dM" for="fM"><b>点这里选择文件，或把文件拖进来</b><small>支持 .xlsx .xls .csv</small></label>
+      <input type="file" id="fM" accept=".xlsx,.xls,.csv" multiple hidden>
+      <div class="row"><button class="btn" id="sampleM" type="button">用示例文件试一下（3 家门店的销售表）</button></div>
+      <div class="files" id="listM"></div>
+      <div class="msg err" id="errM" hidden></div>
+    </div>
+    <div class="card">
+      <h2>2 · 合并设置</h2>
+      <div class="opts">
+        <label><input type="checkbox" id="oAll"> 合并每个文件里的所有工作表（默认只取第一张）</label>
+        <label><input type="checkbox" id="oSrc" checked> 加一列「来源文件」</label>
+        <label><input type="checkbox" id="oDup"> 去掉完全重复的行</label>
+      </div>
+    </div>
+    <div class="card" id="resM" hidden>
+      <h2>3 · 合并结果 <span id="resMsub"></span></h2>
+      <div class="stat" id="statM"></div>
+      <div class="cols" id="colsM"></div>
+      <div class="tbl"><table id="tblM"></table></div>
+      <div class="row"><button class="btn main" id="dlM" type="button">下载合并结果（.xlsx）</button><button class="btn" id="dlMc" type="button">下载为 CSV</button></div>
+    </div>
+  </section>
+
+  <!-- 拆分 -->
+  <section id="pS" hidden>
+    <div class="card">
+      <h2>1 · 选择要拆分的表格</h2>
+      <label class="drop" id="dS" for="fS"><b>点这里选择文件，或把文件拖进来</b><small>支持 .xlsx .xls .csv</small></label>
+      <input type="file" id="fS" accept=".xlsx,.xls,.csv" hidden>
+      <div class="row"><button class="btn" id="sampleS" type="button">用示例文件试一下（全公司销售总表）</button></div>
+      <div class="files" id="listS"></div>
+      <div class="msg err" id="errS" hidden></div>
+    </div>
+    <div class="card" id="cfgS" hidden>
+      <h2>2 · 按哪一列拆分</h2>
+      <div class="row" style="margin-top:0">
+        <select id="sheetS" aria-label="工作表"></select>
+        <select id="colS" aria-label="拆分依据的列"></select>
+      </div>
+      <div class="stat" id="statS" style="margin-top:12px"></div>
+      <div class="vals" id="valsS"></div>
+      <div class="row"><button class="btn main" id="dlS" type="button">下载：每个值一个工作表（.xlsx）</button></div>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:8px">也可以点上面每一行右边的「下载」，单独导出那一部分。</p>
+    </div>
+  </section>
+
+  <footer>这是一个演示工具：用来展示「把重复的表格活做成一键工具」的效果。示例文件中的门店和数据均为虚构。</footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var fmt = function(n){ return n.toLocaleString('zh-CN'); };
+
+  // ---- SheetJS ----
+  var xl = null;
+  function needXLSX(){
+    if (window.XLSX) return Promise.resolve();
+    if (xl) return xl;
+    var srcs = ['https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js','https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'];
+    xl = srcs.reduce(function(p, src){ return p.catch(function(){ return new Promise(function(res, rej){ var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }); }, Promise.reject());
+    return xl;
+  }
+  needXLSX().catch(function(){});
+
+  function readBook(file){
+    return needXLSX().then(function(){
+      return new Promise(function(res, rej){
+        var r = new FileReader();
+        r.onload = function(){
+          try {
+            var isCSV = /\.csv$/i.test(file.name), wb;
+            if (isCSV) { var txt = new TextDecoder('utf-8').decode(new Uint8Array(r.result)); if (txt.indexOf('�') >= 0) txt = new TextDecoder('gbk').decode(new Uint8Array(r.result)); wb = XLSX.read(txt.replace(/^﻿/, ''), { type:'string', cellDates:true }); }
+            else wb = XLSX.read(r.result, { type:'array', cellDates:true });
+            var sheets = wb.SheetNames.map(function(n){
+              var aoa = XLSX.utils.sheet_to_json(wb.Sheets[n], { header:1, defval:'', raw:true, blankrows:false });
+              var hi = aoa.findIndex(function(r){ return r.filter(function(c){ return String(c).trim() !== ''; }).length >= 2; });
+              if (hi < 0) return null;
+              var headers = aoa[hi].map(function(h, i){ h = String(h).trim(); return h || ('第' + (i + 1) + '列'); });
+              var seen = {}; headers = headers.map(function(h){ if (seen[h]) { seen[h]++; return h + '_' + seen[h]; } seen[h] = 1; return h; });
+              var rows = aoa.slice(hi + 1).filter(function(r){ return r.some(function(c){ return String(c).trim() !== ''; }); }).map(function(r){ var o = {}; headers.forEach(function(h, i){ o[h] = r[i] === undefined ? '' : r[i]; }); return o; });
+              return { name:n, headers:headers, rows:rows };
+            }).filter(Boolean);
+            res({ name:file.name, sheets:sheets });
+          } catch (e) { rej(e); }
+        };
+        r.onerror = rej;
+        r.readAsArrayBuffer(file);
+      });
+    });
+  }
+  function cell(v){ if (v instanceof Date) { var p = function(n){ return n < 10 ? '0' + n : n; }; return v.getFullYear() + '-' + p(v.getMonth() + 1) + '-' + p(v.getDate()); } return v; }
+  function tableHTML(headers, rows, limit){
+    var h = '<thead><tr>' + headers.map(function(x){ return '<th>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    rows.slice(0, limit).forEach(function(r){ h += '<tr>' + headers.map(function(x){ var v = cell(r[x]); return v === '' || v == null ? '<td class="e">—</td>' : '<td>' + esc(v) + '</td>'; }).join('') + '</tr>'; });
+    return h + '</tbody>';
+  }
+  function download(headers, rows, fname, sheetName, csv){
+    var data = rows.map(function(r){ var o = {}; headers.forEach(function(h){ o[h] = cell(r[h]); }); return o; });
+    var ws = XLSX.utils.json_to_sheet(data, { header:headers });
+    if (csv) { var blob = new Blob(['﻿' + XLSX.utils.sheet_to_csv(ws)], { type:'text/csv;charset=utf-8' }); var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000); return; }
+    var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, (sheetName || 'Sheet1').slice(0, 31)); XLSX.writeFile(wb, fname);
+  }
+  function wireDrop(zone, onFiles){
+    ['dragenter','dragover'].forEach(function(e){ zone.addEventListener(e, function(ev){ ev.preventDefault(); zone.classList.add('on'); }); });
+    ['dragleave','drop'].forEach(function(e){ zone.addEventListener(e, function(ev){ ev.preventDefault(); zone.classList.remove('on'); }); });
+    zone.addEventListener('drop', function(ev){ onFiles([].slice.call(ev.dataTransfer.files)); });
+  }
+  function fetchSample(names){
+    return Promise.all(names.map(function(n){ return fetch('samples/' + encodeURIComponent(n)).then(function(r){ if (!r.ok) throw new Error(n); return r.blob(); }).then(function(b){ return new File([b], n); }); }));
+  }
+
+  // ---- 合并 ----
+  var books = [], merged = null;
+  function addFiles(files){
+    $('errM').hidden = true;
+    files = files.filter(function(f){ return /\.(xlsx|xls|csv)$/i.test(f.name); });
+    if (!files.length) return;
+    Promise.all(files.map(function(f){ return readBook(f).catch(function(e){ return { name:f.name, error:e }; }); })).then(function(res){
+      var bad = res.filter(function(b){ return b.error || !b.sheets.length; });
+      res.filter(function(b){ return !b.error && b.sheets.length; }).forEach(function(b){ books = books.filter(function(x){ return x.name !== b.name; }); books.push(b); });
+      if (bad.length) { $('errM').textContent = '这些文件读不出数据：' + bad.map(function(b){ return b.name; }).join('、') + '。请确认是正常的 Excel / CSV 文件。'; $('errM').hidden = false; }
+      renderM();
+    }, function(){ $('errM').textContent = 'Excel 解析组件加载失败（可能是网络问题），可以先把表格另存为 CSV 再试。'; $('errM').hidden = false; });
+  }
+  function renderM(){
+    $('listM').innerHTML = books.map(function(b, i){
+      var s = b.sheets[0];
+      return '<div class="file"><b>' + esc(b.name) + '</b><span class="meta">' + b.sheets.length + ' 张工作表 · 第一张「' + esc(s.name) + '」' + fmt(s.rows.length) + ' 行 · 列：' + esc(s.headers.join('、')) + '</span><button class="x" data-i="' + i + '" aria-label="移除">×</button></div>';
+    }).join('');
+    $('listM').querySelectorAll('.x').forEach(function(x){ x.onclick = function(){ books.splice(+x.dataset.i, 1); renderM(); }; });
+    doMerge();
+  }
+  function doMerge(){
+    if (books.length < 1) { $('resM').hidden = true; merged = null; return; }
+    var all = $('oAll').checked, src = $('oSrc').checked, dup = $('oDup').checked;
+    var headers = [], count = {}, parts = [], rows = [], total = 0;
+    books.forEach(function(b){ (all ? b.sheets : [b.sheets[0]]).forEach(function(s){ parts.push({ b:b, s:s }); s.headers.forEach(function(h){ if (headers.indexOf(h) < 0) headers.push(h); count[h] = (count[h] || 0) + 1; }); }); });
+    parts.forEach(function(p){ p.s.rows.forEach(function(r){ var o = {}; if (src) o['来源文件'] = p.b.name.replace(/\.[^.]+$/, '') + (all && p.b.sheets.length > 1 ? ' / ' + p.s.name : ''); headers.forEach(function(h){ o[h] = r[h] === undefined ? '' : r[h]; }); rows.push(o); total++; }); });
+    var removed = 0;
+    if (dup) { var seen = {}; rows = rows.filter(function(r){ var k = JSON.stringify(headers.map(function(h){ return cell(r[h]); })); if (seen[k]) { removed++; return false; } seen[k] = 1; return true; }); }
+    var H = (src ? ['来源文件'] : []).concat(headers);
+    merged = { headers:H, rows:rows };
+    $('resM').hidden = false;
+    $('resMsub').textContent = '预览前 50 行';
+    $('statM').innerHTML = '<div><b>' + parts.length + '</b><span>张表</span></div><div><b>' + fmt(rows.length) + '</b><span>行合并结果</span></div><div><b>' + H.length + '</b><span>列</span></div>' + (dup ? '<div><b>' + fmt(removed) + '</b><span>行重复已去掉</span></div>' : '');
+    $('colsM').innerHTML = headers.map(function(h){ var full = count[h] === parts.length; return '<span class="' + (full ? '' : 'part') + '" title="' + (full ? '所有表都有这一列' : '只有 ' + count[h] + ' 张表有这一列，其余留空') + '">' + esc(h) + (full ? '' : '（' + count[h] + '/' + parts.length + '）') + '</span>'; }).join('');
+    $('tblM').innerHTML = tableHTML(H, rows, 50);
+  }
+  $('fM').addEventListener('change', function(){ addFiles([].slice.call(this.files)); this.value = ''; });
+  wireDrop($('dM'), addFiles);
+  ['oAll','oSrc','oDup'].forEach(function(id){ $(id).addEventListener('change', doMerge); });
+  $('sampleM').onclick = function(){ fetchSample(['门店A_11月销售.xlsx','门店B_11月销售.xlsx','门店C_11月销售.csv']).then(addFiles, function(){ $('errM').textContent = '示例文件加载失败，请稍后再试。'; $('errM').hidden = false; }); };
+  $('dlM').onclick = function(){ if (merged) download(merged.headers, merged.rows, '合并结果.xlsx', '合并结果'); };
+  $('dlMc').onclick = function(){ if (merged) download(merged.headers, merged.rows, '合并结果.csv', '', true); };
+
+  // ---- 拆分 ----
+  var sbook = null;
+  function loadSplit(files){
+    $('errS').hidden = true;
+    var f = files.filter(function(f){ return /\.(xlsx|xls|csv)$/i.test(f.name); })[0]; if (!f) return;
+    readBook(f).then(function(b){
+      if (!b.sheets.length) throw new Error('empty');
+      sbook = b;
+      $('listS').innerHTML = '<div class="file"><b>' + esc(b.name) + '</b><span class="meta">' + b.sheets.length + ' 张工作表</span></div>';
+      $('sheetS').innerHTML = b.sheets.map(function(s, i){ return '<option value="' + i + '">工作表：' + esc(s.name) + '（' + fmt(s.rows.length) + ' 行）</option>'; }).join('');
+      fillCols(); $('cfgS').hidden = false;
+    }).catch(function(){ $('errS').textContent = '读不出「' + f.name + '」里的数据，请确认是正常的 Excel / CSV 文件。'; $('errS').hidden = false; });
+  }
+  function fillCols(){
+    var s = sbook.sheets[+$('sheetS').value];
+    var best = 0, bi = 0;
+    s.headers.forEach(function(h, i){ var u = new Set(s.rows.map(function(r){ return String(cell(r[h])); })).size; var score = u >= 2 && u <= 50 ? 100 - Math.abs(u - 6) : 0; if (score > best) { best = score; bi = i; } });
+    $('colS').innerHTML = s.headers.map(function(h, i){ return '<option value="' + i + '"' + (i === bi ? ' selected' : '') + '>按「' + esc(h) + '」拆分</option>'; }).join('');
+    renderS();
+  }
+  function groups(){
+    var s = sbook.sheets[+$('sheetS').value], h = s.headers[+$('colS').value], g = {}, order = [];
+    s.rows.forEach(function(r){ var k = String(cell(r[h])).trim() || '（空白）'; if (!g[k]) { g[k] = []; order.push(k); } g[k].push(r); });
+    return { s:s, h:h, g:g, order:order };
+  }
+  function safe(n){ return n.replace(/[\\\/\?\*\[\]:]/g, '_').slice(0, 31) || '空白'; }
+  function renderS(){
+    var x = groups();
+    $('statS').innerHTML = '<div><b>' + x.order.length + '</b><span>个不同的「' + esc(x.h) + '」</span></div><div><b>' + fmt(x.s.rows.length) + '</b><span>行数据</span></div>';
+    $('valsS').innerHTML = x.order.length > 200 ? '<div class="msg err">这一列有 ' + x.order.length + ' 个不同的值，拆出来会太多，换一列试试。</div>' :
+      x.order.map(function(k, i){ return '<div class="val"><b>' + esc(k) + '</b><span>' + fmt(x.g[k].length) + ' 行</span><button class="btn" data-i="' + i + '" type="button">下载</button></div>'; }).join('');
+    $('dlS').disabled = x.order.length > 200;
+    $('valsS').querySelectorAll('button').forEach(function(b){ b.onclick = function(){ var k = x.order[+b.dataset.i]; download(x.s.headers, x.g[k], safe(k) + '.xlsx', safe(k)); }; });
+  }
+  $('sheetS').addEventListener('change', fillCols);
+  $('colS').addEventListener('change', renderS);
+  $('fS').addEventListener('change', function(){ loadSplit([].slice.call(this.files)); this.value = ''; });
+  wireDrop($('dS'), loadSplit);
+  $('sampleS').onclick = function(){ fetchSample(['全公司_11月销售总表.xlsx']).then(loadSplit, function(){ $('errS').textContent = '示例文件加载失败，请稍后再试。'; $('errS').hidden = false; }); };
+  $('dlS').onclick = function(){
+    var x = groups(), wb = XLSX.utils.book_new(), used = {};
+    x.order.forEach(function(k){ var n = safe(k), j = 2; while (used[n]) n = safe(k).slice(0, 28) + '_' + (j++); used[n] = 1;
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(x.g[k].map(function(r){ var o = {}; x.s.headers.forEach(function(h){ o[h] = cell(r[h]); }); return o; }), { header:x.s.headers }), n); });
+    XLSX.writeFile(wb, '按' + safe(x.h) + '拆分.xlsx');
+  };
+
+  // ---- tabs ----
+  function tab(m){ $('tM').classList.toggle('on', m); $('tS').classList.toggle('on', !m); $('pM').hidden = !m; $('pS').hidden = m; }
+  $('tM').onclick = function(){ tab(true); }; $('tS').onclick = function(){ tab(false); };
+  if (/[?&]tab=split/.test(location.search)) tab(false);
+  if (/[?&]demo=1/.test(location.search)) setTimeout(function(){ (/[?&]tab=split/.test(location.search) ? $('sampleS') : $('sampleM')).click(); }, 50);
+})();
+</script>
+</body>
+</html>

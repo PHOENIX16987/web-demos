@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>图文快印报价器</title>
+<meta name="description" content="印刷 / 广告物料自动报价，选选项出价格、一键生成报价单（演示工具）">
+<style>
+  :root{
+    --bg:#f6f4f1; --card:#fff; --ink:#24201c; --muted:#77706a; --line:#e5dfd7; --soft:#faf8f5;
+    --brand:#c2410c; --brand-soft:#fdeee5; --ok:#2e7d4f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:14.5px}
+  .num{font-variant-numeric:tabular-nums}
+  .wrap{max-width:1120px;margin:0 auto;padding:26px 20px 48px}
+  header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 20px;margin-bottom:18px}
+  h1{font-size:25px}
+  header p{color:var(--muted);font-size:13.5px}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px;align-items:start}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .card h2{font-size:15.5px;margin-bottom:12px}
+  .prods{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:16px}
+  .prods button{font:inherit;font-size:13.5px;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:10px 4px;cursor:pointer;color:var(--ink)}
+  .prods button b{display:block;font-size:18px;line-height:1.2}
+  .prods button.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:700}
+  .f{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:center;padding:9px 0;border-top:1px dashed var(--line)}
+  .f:first-of-type{border-top:0}
+  .f > span{font-size:13.5px;color:var(--muted)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chips button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 11px;cursor:pointer;color:var(--ink)}
+  .chips button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chk{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px}
+  .chk label{display:flex;align-items:center;gap:6px;cursor:pointer}
+  .chk input{accent-color:var(--brand)}
+  .sum{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .sum .p{font-size:30px;font-weight:800;color:var(--brand)}
+  .sum .p small{font-size:16px}
+  .sum .d{font-size:12.5px;color:var(--muted)}
+  .btn{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:10px;cursor:pointer}
+  .btn.main{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn:focus-visible,.chips button:focus-visible,.prods button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+  .sheet{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px;color:#24201c}
+  .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:2px solid #24201c;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap}
+  .sh h3{font-size:21px;letter-spacing:.08em}
+  .sh .co{font-size:13px;color:#77706a;text-align:right}
+  .meta{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:13px;color:#77706a;margin-bottom:12px}
+  .meta input{font:inherit;font-size:13px;border:0;border-bottom:1px dashed #cfc6bb;padding:0 2px;width:9em;color:#24201c;background:transparent}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{font-size:12.5px;color:#77706a;font-weight:600;text-align:left;padding:7px 6px;border-bottom:1px solid #e5dfd7}
+  td{padding:9px 6px;border-bottom:1px solid #f0ebe4;vertical-align:top}
+  td.r,th.r{text-align:right;white-space:nowrap}
+  td small{display:block;color:#77706a;font-size:12px}
+  .rm{border:0;background:none;color:#b0a79d;cursor:pointer;font-size:16px;padding:0 4px}
+  .tot{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-top:12px;font-size:13.5px}
+  .tot b{font-size:22px;color:var(--brand)}
+  .note{font-size:12px;color:#77706a;margin-top:14px;border-top:1px dashed #e5dfd7;padding-top:10px}
+  .empty{text-align:center;color:#77706a;padding:26px 0;font-size:13.5px}
+  .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .toast{font-size:13px;color:var(--ok);align-self:center}
+  footer{font-size:12.5px;color:var(--muted);margin-top:18px}
+
+  @media (max-width:900px){ .grid{grid-template-columns:minmax(0,1fr)} }
+  @media (max-width:520px){ .wrap{padding:20px 14px 36px} .prods{grid-template-columns:repeat(3,minmax(0,1fr))} .f{grid-template-columns:minmax(0,1fr)} .sheet{padding:18px 14px} th.hide,td.hide{display:none} }
+  @media print{
+    body{background:#fff} header,.card,footer,.acts,.rm{display:none!important}
+    .wrap{padding:0;max-width:none} .grid{display:block} .sheet{border:0;padding:0}
+    .meta input{border:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>图文快印 · 自动报价器</h1><p>选好产品和工艺，价格自动算出来；加入报价单后可以一键复制或打印</p></div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1 · 选产品和规格</h2>
+      <div class="prods" id="prods"></div>
+      <div id="form"></div>
+      <div class="sum">
+        <div><div class="d" id="unit"></div><div class="p num" id="price"></div></div>
+        <button class="btn main" id="add" type="button">加入报价单</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="sheet" id="sheet">
+        <div class="sh">
+          <h3>报 价 单</h3>
+          <div class="co">示例图文快印（虚构）<br>地址：示例市梧桐路 18 号</div>
+        </div>
+        <div class="meta">
+          <span>客户：<input id="cust" value="某某工作室" aria-label="客户名称"></span>
+          <span>编号：<b id="qno"></b></span>
+          <span>日期：<b id="qdate"></b></span>
+          <span>有效期：7 天</span>
+        </div>
+        <table><thead><tr><th>项目</th><th class="r hide">数量</th><th class="r">金额</th><th></th></tr></thead><tbody id="lines"></tbody></table>
+        <div class="tot" id="tot"></div>
+        <div class="note">说明：价格含设计排版（客户提供文字和图片）；不含运费，同城满 300 元免费配送；加急订单 24 小时出货。</div>
+      </div>
+      <div class="acts">
+        <button class="btn main" id="copy" type="button">复制报价文字（发微信用）</button>
+        <button class="btn" id="print" type="button">打印 / 存为 PDF</button>
+        <button class="btn" id="clear" type="button">清空</button>
+        <span class="toast" id="toast" hidden>已复制</span>
+      </div>
+    </section>
+  </div>
+
+  <footer>这是一个演示工具：展示「把报价规则做成一键报价器」的效果。店名、价格和规则均为虚构，可以按你自己的价目表定制。</footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var money = function(n){ return '¥' + (Math.round(n * 100) / 100).toLocaleString('zh-CN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); };
+
+  // 价目规则（虚构）：base 为单价，qty 档位给出折扣系数
+  var P = {
+    card: { name:'名片', icon:'▭', unit:'盒', note:'每盒 100 张',
+      opts:[ ['材质', [['铜版纸 300g', 15], ['特种纸（珠光/刚古）', 35], ['PVC 防水', 60]]],
+             ['印面', [['单面', 0], ['双面', 5]]] ],
+      qty:[2, 5, 10, 20], tier:function(q){ return q >= 20 ? 0.85 : q >= 10 ? 0.9 : 1; },
+      adds:[['覆膜', 5], ['圆角', 3], ['烫金', 20]] },
+    flyer:{ name:'宣传单', icon:'▤', unit:'张',
+      opts:[ ['尺寸', [['A5', 0.16], ['A4', 0.28], ['三折页 A4', 0.34]]],
+             ['纸张', [['157g 铜版纸', 1], ['200g 铜版纸', 1.25], ['250g 铜版纸', 1.5]]] ],
+      qty:[500, 1000, 2000, 5000], mult:true, tier:function(q){ return q >= 5000 ? 0.7 : q >= 2000 ? 0.82 : q >= 1000 ? 1 : 1.3; },
+      adds:[['双面印刷', 0.06], ['覆哑膜', 0.05]] },
+    poster:{ name:'海报', icon:'▣', unit:'张',
+      opts:[ ['尺寸', [['A3', 8], ['A2', 15], ['A1', 28], ['A0', 52]]],
+             ['材质', [['背胶 PP', 1], ['高光相纸', 1.3], ['KT 板（裱板）', 2.2]]] ],
+      qty:[1, 5, 10, 30], mult:true, tier:function(q){ return q >= 30 ? 0.8 : q >= 10 ? 0.9 : 1; },
+      adds:[['覆膜', 3]] },
+    rollup:{ name:'易拉宝', icon:'▯', unit:'套',
+      opts:[ ['尺寸', [['80×200cm', 85], ['100×200cm', 105], ['120×200cm', 125]]],
+             ['支架', [['普通铝架', 0], ['加厚铝架', 25], ['门型展架', 40]]] ],
+      qty:[1, 2, 5, 10], tier:function(q){ return q >= 10 ? 0.85 : q >= 5 ? 0.92 : 1; },
+      adds:[['加送收纳包', 10]] },
+    sticker:{ name:'不干胶', icon:'◉', unit:'张',
+      opts:[ ['尺寸', [['小号 ≤5cm', 0.08], ['中号 ≤10cm', 0.15], ['大号 ≤20cm', 0.32]]],
+             ['材质', [['铜版纸不干胶', 1], ['PVC 防水', 1.6], ['透明', 1.8]]] ],
+      qty:[500, 1000, 3000, 10000], mult:true, tier:function(q){ return q >= 10000 ? 0.6 : q >= 3000 ? 0.75 : q >= 1000 ? 1 : 1.4; },
+      adds:[['异形模切', 0.03]] }
+  };
+  var RUSH = 0.3, MIN = 30;
+
+  var cur = 'card', sel = {}, lines = [];
+  function init(k){
+    cur = k; var p = P[k];
+    sel = { o: p.opts.map(function(){ return 0; }), q: p.qty[1], adds: {}, rush: false };
+    $('prods').innerHTML = Object.keys(P).map(function(x){ return '<button type="button" data-k="' + x + '" class="' + (x === k ? 'on' : '') + '"><b>' + P[x].icon + '</b>' + P[x].name + '</button>'; }).join('');
+    $('prods').querySelectorAll('button').forEach(function(b){ b.onclick = function(){ init(b.dataset.k); }; });
+    var h = '';
+    p.opts.forEach(function(o, i){ h += '<div class="f"><span>' + o[0] + '</span><div class="chips" data-o="' + i + '">' + o[1].map(function(c, j){ return '<button type="button" data-j="' + j + '" class="' + (j === 0 ? 'on' : '') + '">' + c[0] + '</button>'; }).join('') + '</div></div>'; });
+    h += '<div class="f"><span>数量（' + p.unit + '）</span><div class="chips" data-q="1">' + p.qty.map(function(q){ return '<button type="button" data-v="' + q + '" class="' + (q === sel.q ? 'on' : '') + '">' + q.toLocaleString('zh-CN') + '</button>'; }).join('') + '</div></div>';
+    h += '<div class="f"><span>工艺</span><div class="chk">' + p.adds.map(function(a, i){ return '<label><input type="checkbox" data-a="' + i + '"> ' + a[0] + '</label>'; }).join('') + '<label><input type="checkbox" id="rush"> 加急 24 小时（+30%）</label></div></div>';
+    $('form').innerHTML = h;
+    $('form').querySelectorAll('.chips').forEach(function(g){
+      g.addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return;
+        g.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
+        if (g.dataset.q) sel.q = +b.dataset.v; else sel.o[+g.dataset.o] = +b.dataset.j; calc(); });
+    });
+    $('form').querySelectorAll('input[data-a]').forEach(function(c){ c.onchange = function(){ sel.adds[c.dataset.a] = c.checked; calc(); }; });
+    $('rush').onchange = function(){ sel.rush = this.checked; calc(); };
+    calc();
+  }
+  function quote(k, s){
+    var p = P[k], q = s.q, unit, desc = [];
+    if (p.mult) { unit = p.opts[0][1][s.o[0]][1] * p.opts[1][1][s.o[1]][1]; }
+    else { unit = p.opts[0][1][s.o[0]][1] + p.opts[1][1][s.o[1]][1]; }
+    p.opts.forEach(function(o, i){ desc.push(o[1][s.o[i]][0]); });
+    p.adds.forEach(function(a, i){ if (s.adds[i]) { unit += a[1]; desc.push(a[0]); } });
+    var tier = p.tier(q), sub = unit * tier * q;
+    if (s.rush) { sub *= 1 + RUSH; desc.push('加急'); }
+    var total = Math.max(MIN, Math.round(sub));
+    return { name:p.name, desc:desc.join(' / '), q:q, unit:p.unit, total:total, each: total / q, tier:tier, min: total === MIN && sub < MIN, note:p.note };
+  }
+  function calc(){
+    var r = quote(cur, sel);
+    $('price').innerHTML = '<small>¥</small>' + r.total.toLocaleString('zh-CN');
+    $('unit').textContent = r.q.toLocaleString('zh-CN') + ' ' + r.unit + ' · 折合 ' + money(r.each) + '/' + r.unit + (r.tier < 1 ? ' · 已享数量优惠 ' + Math.round((1 - r.tier) * 100) + '%' : '') + (r.min ? ' · 未满起印价按 ¥' + MIN + ' 计' : '') + (r.note ? ' · ' + r.note : '');
+  }
+  function renderSheet(){
+    var d = new Date(), pad = function(n){ return n < 10 ? '0' + n : n; };
+    $('qdate').textContent = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    $('qno').textContent = 'BJ' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + (lines.length ? String(100 + lines.length) : '000');
+    if (!lines.length) { $('lines').innerHTML = '<tr><td colspan="4" class="empty">还没有项目：在左边选好规格，点「加入报价单」</td></tr>'; $('tot').innerHTML = ''; return; }
+    $('lines').innerHTML = lines.map(function(l, i){ return '<tr><td><b>' + l.name + '</b><small>' + l.desc + '</small></td><td class="r hide num">' + l.q.toLocaleString('zh-CN') + ' ' + l.unit + '</td><td class="r num">' + money(l.total) + '</td><td class="r"><button class="rm" data-i="' + i + '" aria-label="删除这一项">×</button></td></tr>'; }).join('');
+    $('lines').querySelectorAll('.rm').forEach(function(b){ b.onclick = function(){ lines.splice(+b.dataset.i, 1); renderSheet(); }; });
+    var sum = lines.reduce(function(a, l){ return a + l.total; }, 0), off = sum >= 1000 ? Math.round(sum * 0.05) : 0;
+    $('tot').innerHTML = '<span>小计 <b style="font-size:14px;color:inherit" class="num">' + money(sum) + '</b></span>' + (off ? '<span>满 1000 减 5%：<span class="num">-' + money(off) + '</span></span>' : '<span style="color:#77706a">满 1000 元再减 5%</span>') + '<span>合计 <b class="num">' + money(sum - off) + '</b></span>';
+  }
+  $('add').onclick = function(){ lines.push(quote(cur, sel)); renderSheet(); };
+  $('clear').onclick = function(){ lines = []; renderSheet(); };
+  $('print').onclick = function(){ window.print(); };
+  $('copy').onclick = function(){
+    if (!lines.length) return;
+    var sum = lines.reduce(function(a, l){ return a + l.total; }, 0), off = sum >= 1000 ? Math.round(sum * 0.05) : 0;
+    var t = '【报价单】' + $('cust').value + '\n编号 ' + $('qno').textContent + '，有效期 7 天\n\n' +
+      lines.map(function(l, i){ return (i + 1) + '. ' + l.name + '（' + l.desc + '）× ' + l.q.toLocaleString('zh-CN') + ' ' + l.unit + '：' + money(l.total); }).join('\n') +
+      '\n\n合计：' + money(sum - off) + (off ? '（已减 ' + money(off) + '）' : '') + '\n含设计排版，不含运费，同城满 300 免费配送。';
+    var done = function(){ $('toast').hidden = false; setTimeout(function(){ $('toast').hidden = true; }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, function(){ prompt('复制下面的文字：', t); }); else prompt('复制下面的文字：', t);
+  };
+
+  // 打开时预置两项，第一屏就能看到报价单效果
+  lines.push(quote('card', { o:[1, 1], q:5, adds:{ 0:true }, rush:false }));
+  lines.push(quote('flyer', { o:[1, 0], q:2000, adds:{ 0:true }, rush:false }));
+  init('card'); renderSheet();
+})();
+</script>
+</body>
+</html>
